@@ -29,6 +29,16 @@ app.get("/gallery", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "gallery.html"));
 });
 
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGODB_URI);
+let db = mongoose.connection;
+db.once("open", () => {
+console.log("Connected to MongoDB");
+});
+db.on("error", (err) => {
+console.error("DB Error:" + err);
+});
+
 // Serve gallery-pagination.html
 app.get("/gallery-pagination", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "gallery-pagination.html"));
