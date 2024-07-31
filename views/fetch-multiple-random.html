@@ -4,16 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fetch Gallery</title>
+    <title>Fetch Random Files</title>
 </head>
 
 <body>
-    <h1>Fetch Gallery</h1>
-    <button onclick="fetchRandomFiles()">Fetch Gallery</button>
-    <div id="imageContainer"></div> <!-- Added this line -->
+    <h1>Fetch Random Files</h1>
+    <label for="imageCount">Number of images to fetch:</label>
+    <input type="number" id="imageCount" min="1" value="2" />
+    <button onclick="fetchRandomFiles()">Fetch Random Files</button>
+    <div id="imageContainer"></div>
     <script>
         function fetchRandomFiles() {
-            fetch(`/fetch/all`)
+            const count = document.getElementById('imageCount').value;
+            if (count < 1) {
+                alert("Please enter a number greater than 0.");
+                return;
+            }
+            fetch(`/fetch/multiple?count=${count}`)
                 .then((response) => response.json())
                 .then((data) => {
                     console.log(data);
