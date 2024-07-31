@@ -3,8 +3,9 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 const { getRandomFiles, getAllFiles } = require("../util/fileUtils");
-const {readFileAsBase64} = require("../util/base64Util")
+const { readFileAsBase64 } = require("../util/base64Util")
 const { paginate } = require("../util/paginationUtil"); // Import the pagination utility function
+const Image = require("../models/ file");
 
 // Fetch file as base64
 const fetchFileAsBase64 = (filePath) => {
@@ -60,11 +61,24 @@ const fetchAllFilesAsBase64 = () => {
 };
 
 router.get("/all", (req, res) => {
-  const files = fetchAllFilesAsBase64();
-  if (Object.keys(files).length === 0) {
-    return res.status(404).send("No files found.");
-  }
-  res.json(files);
+  Image.find()
+    .then((allImages) => {
+      if (allImages.length === 0) {
+        return res.status(404).json({ error: "No files found." });
+      }
+      const formattedImages = allImages.map((image) => ({
+        filename: image.filename,
+        contentType: image.contentType,
+        imageBuffer: image.imageBuffer
+          ? image.imageBuffer.toString("base64")
+          : "",
+      }));
+      res.json(formattedImages);
+    })
+    .catch((error) => {
+      console.error("Error fetching files:", error);
+      res.status(500).json({ error: "Error fetching files." });
+    });
 });
 
 const ITEMS_PER_PAGE = 1; // Number of items per page
