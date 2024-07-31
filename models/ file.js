@@ -17,4 +17,4 @@ const ImageSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-module
+module.exports = mongoose.model("Image", ImageSchema);
